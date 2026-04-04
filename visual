@@ -1,0 +1,189 @@
+--// Premium Gradient Loading UI
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+
+local loadingGui = Instance.new("ScreenGui")
+loadingGui.Name = "PremiumGradientLoadingUI"
+loadingGui.IgnoreGuiInset = true
+loadingGui.ResetOnSpawn = false
+loadingGui.Parent = game:GetService("CoreGui")
+
+-- Background
+local background = Instance.new("Frame", loadingGui)
+background.Size = UDim2.new(1, 0, 1, 0)
+background.BackgroundColor3 = Color3.fromRGB(10, 10, 20)
+background.BackgroundTransparency = 1
+
+-- Main Frame
+local mainFrame = Instance.new("Frame", background)
+mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+mainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+mainFrame.Size = UDim2.new(0, 360, 0, 200)
+mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 40)
+Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 12)
+mainFrame.BackgroundTransparency = 0
+mainFrame.Visible = false
+
+-- Player Info Panel
+local playerInfo = Instance.new("Frame", mainFrame)
+playerInfo.Size = UDim2.new(0, 120, 1, 0)
+playerInfo.Position = UDim2.new(0, 0, 0, 0)
+playerInfo.BackgroundTransparency = 1
+
+local avatar = Instance.new("ImageLabel", playerInfo)
+avatar.Size = UDim2.new(0, 60, 0, 60)
+avatar.Position = UDim2.new(0.5, -30, 0, 20)
+avatar.BackgroundTransparency = 1
+avatar.Image = Players:GetUserThumbnailAsync(player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size100x100)
+
+local nameLabel = Instance.new("TextLabel", playerInfo)
+nameLabel.Position = UDim2.new(0.5, -50, 0, 90)
+nameLabel.Size = UDim2.new(1, 0, 0, 24)
+nameLabel.Text = player.DisplayName
+nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+nameLabel.BackgroundTransparency = 1
+nameLabel.TextScaled = true
+nameLabel.Font = Enum.Font.GothamBold
+Instance.new("UIGradient", nameLabel).Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(100, 200, 255)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 140, 200))
+}
+
+-- Spinner
+local spinner = Instance.new("ImageLabel", mainFrame)
+spinner.Size = UDim2.new(0, 40, 0, 40)
+spinner.Position = UDim2.new(1, -50, 0, 20)
+spinner.BackgroundTransparency = 1
+spinner.Image = "rbxassetid://1095708"
+spinner.ImageColor3 = Color3.fromRGB(100, 200, 255)
+
+-- Spin animation
+task.spawn(function()
+	while spinner and spinner.Parent do
+		spinner.Rotation += 5
+		RunService.RenderStepped:Wait()
+	end
+end)
+
+-- Mutation Typing Text
+local mutationText = Instance.new("TextLabel", mainFrame)
+mutationText.Size = UDim2.new(1, -40, 0, 30)
+mutationText.Position = UDim2.new(0, 20, 1, -70)
+mutationText.BackgroundTransparency = 1
+mutationText.Font = Enum.Font.GothamBold
+mutationText.Text = ""
+mutationText.TextSize = 20
+mutationText.TextColor3 = Color3.fromRGB(255, 255, 255)
+mutationText.TextTransparency = 0
+mutationText.TextStrokeTransparency = 0.5
+
+local mutationGradient = Instance.new("UIGradient", mutationText)
+mutationGradient.Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 200, 255)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(130, 180, 255)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 140, 180))
+}
+
+-- Typing effect
+local message = "Bypassing Anti-Cheat Wall"
+task.spawn(function()
+	for i = 1, #message do
+		mutationText.Text = string.sub(message, 1, i)
+		task.wait(0.05)
+	end
+end)
+
+-- Progress Bar
+local progressBarBg = Instance.new("Frame", mainFrame)
+progressBarBg.Position = UDim2.new(0.1, 0, 1, -40)
+progressBarBg.Size = UDim2.new(0.8, 0, 0, 12)
+progressBarBg.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+Instance.new("UICorner", progressBarBg).CornerRadius = UDim.new(1, 0)
+
+local progressBar = Instance.new("Frame", progressBarBg)
+progressBar.Size = UDim2.new(0, 0, 1, 0)
+progressBar.BackgroundColor3 = Color3.fromRGB(80, 180, 255)
+Instance.new("UICorner", progressBar).CornerRadius = UDim.new(1, 0)
+
+local barGradient = Instance.new("UIGradient", progressBar)
+barGradient.Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(100, 255, 200)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(60, 180, 255))
+}
+barGradient.Rotation = 45
+
+task.spawn(function()
+	while progressBar and progressBar.Parent do
+		for i = 0, 360, 1 do
+			barGradient.Rotation = i
+			RunService.RenderStepped:Wait()
+		end
+	end
+end)
+
+-- Looping Warning Message
+local warningLabel = Instance.new("TextLabel", mainFrame)
+warningLabel.Position = UDim2.new(0.5, 0, 1, -10)
+warningLabel.AnchorPoint = Vector2.new(0.5, 1)
+warningLabel.Size = UDim2.new(1, -20, 0, 24)
+warningLabel.BackgroundTransparency = 1
+warningLabel.Text = "âš  Warning: Please donâ€™t leave, it can cause you ban."
+warningLabel.TextScaled = true
+warningLabel.TextColor3 = Color3.new(1, 1, 1)
+warningLabel.Font = Enum.Font.GothamBold
+warningLabel.TextTransparency = 1
+
+local warningGradient = Instance.new("UIGradient", warningLabel)
+warningGradient.Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 100, 100)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 200, 100)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 100, 100))
+}
+warningGradient.Rotation = 45
+
+task.spawn(function()
+	while warningLabel and warningLabel.Parent do
+		local fadeIn = TweenService:Create(warningLabel, TweenInfo.new(1), {TextTransparency = 0})
+		local fadeOut = TweenService:Create(warningLabel, TweenInfo.new(1), {TextTransparency = 1})
+		fadeIn:Play()
+		fadeIn.Completed:Wait()
+		fadeOut:Play()
+		fadeOut.Completed:Wait()
+	end
+end)
+
+-- Fade in
+TweenService:Create(background, TweenInfo.new(0.5), {BackgroundTransparency = 0}):Play()
+mainFrame.Visible = true
+
+-- Progress animation
+local function animateProgressBar(duration)
+	local tween = TweenService:Create(progressBar, TweenInfo.new(duration, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+		Size = UDim2.new(1, 0, 1, 0)
+	})
+	tween:Play()
+	tween.Completed:Wait()
+end
+
+task.spawn(function()
+	animateProgressBar(3)
+end)
+
+-- Fade out and destroy after duration
+task.delay(60.3, function()
+	local info = TweenInfo.new(0.6, Enum.EasingStyle.Quad)
+	TweenService:Create(background, info, {BackgroundTransparency = 1}):Play()
+	TweenService:Create(mainFrame, info, {BackgroundTransparency = 1}):Play()
+	TweenService:Create(avatar, info, {ImageTransparency = 1}):Play()
+	TweenService:Create(nameLabel, info, {TextTransparency = 1}):Play()
+	TweenService:Create(spinner, info, {ImageTransparency = 1}):Play()
+	TweenService:Create(mutationText, info, {TextTransparency = 1}):Play()
+	TweenService:Create(progressBar, info, {BackgroundTransparency = 1}):Play()
+	TweenService:Create(progressBarBg, info, {BackgroundTransparency = 1}):Play()
+	TweenService:Create(warningLabel, info, {TextTransparency = 1}):Play()
+	task.wait(0.8)
+	loadingGui:Destroy()
+end)
